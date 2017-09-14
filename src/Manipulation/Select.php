@@ -20,6 +20,11 @@ use NilPortugues\Sql\QueryBuilder\Syntax\OrderBy;
  */
 class Select extends AbstractBaseQuery
 {
+    const WILDCARD_NONE = 0;
+    const WILDCARD_FRONT = 1;
+    const WILDCARD_BACK = 2;
+    const WILDCARD_BOTH = 3;
+
     /**
      * @var Table
      */
