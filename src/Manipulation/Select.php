@@ -543,4 +543,46 @@ class Select extends AbstractBaseQuery
         }
         return $current;
     }
+
+    /**
+     * @param array $search Array containing ['AND' => [key => value], 'OR' => [key => value]]
+     * @return $this
+     */
+    public function advancedWhere(array $search)
+    {
+      if (!isset($search['AND']) && !isset($search['OR'])) {
+            $and = $search;
+            $search['AND'] = $and;
+        }
+
+        if (sizeof($search['AND']) > 0) {
+            $where = $query->where();
+
+            foreach ($search['AND'] as $key => $value) {
+                $where->equals($key, $value);
+            }
+
+            if (sizeof($search['OR']) > 0) {
+                $or = $where->subWhere('OR');
+
+                foreach ($search['OR'] as $key => $value) {
+                    $or->like($key, $value.'%');
+                }
+            }
+        } else {
+            if (sizeof($search['OR']) > 0) {
+                $where = $query->where('OR');
+
+                foreach ($search['OR'] as $key => $value) {
+                    if (!is_array($value)) $value = [$value];
+
+                    foreach ($value as $valueItem) {
+                        $where->like($key, $valueItem.'%');
+                    }
+                }
+            }
+        }
+
+        return $this;
+    }
 }
