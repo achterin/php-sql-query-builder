@@ -167,14 +167,15 @@ class ColumnQuery
      * @param string   $funcName
      * @param string[] $arguments
      * @param string   $alias
+     * @param bool $returnParent
      *
-     * @return $this
+     * @return $this|Select
      */
-    public function setFunctionAsColumn($funcName, array $arguments, $alias)
+    public function setFunctionAsColumn($funcName, array $arguments, $alias, $returnParent = false)
     {
         $this->columnFuncs[$alias] = ['func' => $funcName, 'args' => $arguments];
 
-        return $this;
+        return ( $returnParent ? $this->select : $this);
     }
 
     /**

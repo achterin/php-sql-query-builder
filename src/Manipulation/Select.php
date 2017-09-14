@@ -307,11 +307,11 @@ class Select extends AbstractBaseQuery
      * @param string[] $arguments
      * @param string   $alias
      *
-     * @return ColumnQuery
+     * @return Select
      */
     public function setFunctionAsColumn($funcName, array $arguments, $alias)
     {
-        return $this->columnQuery->setFunctionAsColumn($funcName, $arguments, $alias);
+        return $this->columnQuery->setFunctionAsColumn($funcName, $arguments, $alias, true);
     }
 
     /**
