@@ -546,9 +546,10 @@ class Select extends AbstractBaseQuery
 
     /**
     * @param array $search Array containing ['AND' => [key => value], 'OR' => [key => value]]
+    * @param int $wildcardType 1 = front 2 = back 3 = both
     * @return $this
     */
-    public function advancedWhere(array $search)
+    public function advancedWhere(array $search, int $wildcardType)
     {
       if (!isset($search['AND']) && !isset($search['OR'])) {
         $and = $search;
@@ -566,7 +567,7 @@ class Select extends AbstractBaseQuery
           $or = $where->subWhere('OR');
 
           foreach ($search['OR'] as $key => $value) {
-            $or->like($key, $value.'%');
+            $or->like($key, $this->wildcardValue($value, $wildcardType));
           }
         }
       } else {
@@ -577,12 +578,33 @@ class Select extends AbstractBaseQuery
             if (!is_array($value)) $value = [$value];
 
             foreach ($value as $valueItem) {
-              $where->like($key, $valueItem.'%');
+              $where->like($key, $this->wildcardValue($valueItem, $wildcardType));
             }
           }
         }
       }
 
       return $this;
+    }
+
+    private function wildcardValue(string $item, int $wildcardType) : string
+    {
+        $final = $item;
+
+        switch ($wildcardType) {
+            case self::WILDCARD_FRONT :
+                $final = '%' . $item;
+                break;
+
+            case self::WILDCARD_BACK :
+                $final = $item . '%';
+                break;
+
+            case self::WILDCARD_BOTH :
+                $final = '%' . $item . '%';
+                break;
+        }
+
+        return $final;
     }
 }
