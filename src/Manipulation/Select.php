@@ -554,7 +554,7 @@ class Select extends AbstractBaseQuery
     * @param int $wildcardType 1 = front 2 = back 3 = both
     * @return $this
     */
-    public function advancedWhere(array $search, int $wildcardType)
+    public function advancedWhere(array $search, $wildcardType)
     {
       if (!isset($search['AND']) && !isset($search['OR'])) {
         $and = $search;
@@ -592,7 +592,13 @@ class Select extends AbstractBaseQuery
       return $this;
     }
 
-    private function wildcardValue(string $item, int $wildcardType) : string
+    /**
+     * @param string $item
+     * @param int    $wildcardType
+     *
+     * @return string
+     */
+    private function wildcardValue($item, $wildcardType)
     {
         $final = $item;
 
