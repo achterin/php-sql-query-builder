@@ -20,11 +20,6 @@ use NilPortugues\Sql\QueryBuilder\Syntax\OrderBy;
  */
 class Select extends AbstractBaseQuery
 {
-    const WILDCARD_NONE = 0;
-    const WILDCARD_FRONT = 1;
-    const WILDCARD_BACK = 2;
-    const WILDCARD_BOTH = 3;
-
     /**
      * @var Table
      */
@@ -572,7 +567,7 @@ class Select extends AbstractBaseQuery
           $or = $where->subWhere('OR');
 
           foreach ($search['OR'] as $key => $value) {
-            $or->like($key, $this->wildcardValue($value, $wildcardType));
+            $or->like($key, $this->where()->wildcardValue($value, $wildcardType));
           }
         }
       } else {
@@ -583,39 +578,12 @@ class Select extends AbstractBaseQuery
             if (!is_array($value)) $value = [$value];
 
             foreach ($value as $valueItem) {
-              $where->like($key, $this->wildcardValue($valueItem, $wildcardType));
+              $where->like($key, $this->where()->wildcardValue($valueItem, $wildcardType));
             }
           }
         }
       }
 
       return $this;
-    }
-
-    /**
-     * @param string $item
-     * @param int    $wildcardType
-     *
-     * @return string
-     */
-    private function wildcardValue($item, $wildcardType)
-    {
-        $final = $item;
-
-        switch ($wildcardType) {
-            case self::WILDCARD_FRONT :
-                $final = '%' . $item;
-                break;
-
-            case self::WILDCARD_BACK :
-                $final = $item . '%';
-                break;
-
-            case self::WILDCARD_BOTH :
-                $final = '%' . $item . '%';
-                break;
-        }
-
-        return $final;
     }
 }

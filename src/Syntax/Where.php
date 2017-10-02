@@ -35,6 +35,11 @@ class Where
     const CONJUNCTION_EXISTS = 'EXISTS';
     const CONJUNCTION_NOT_EXISTS = 'NOT EXISTS';
 
+    const WILDCARD_NONE = 0;
+    const WILDCARD_FRONT = 1;
+    const WILDCARD_BACK = 2;
+    const WILDCARD_BOTH = 3;
+
     /**
      * @var array
      */
@@ -346,23 +351,25 @@ class Where
     /**
      * @param string $column
      * @param        $value
+     * @param int    $wildcardType
      *
      * @return static
      */
-    public function like($column, $value)
+    public function like($column, $value, $wildcardType = self::WILDCARD_NONE)
     {
-        return $this->compare($column, $value, self::OPERATOR_LIKE);
+        return $this->compare($column, $this->wildcardValue($value, $wildcardType), self::OPERATOR_LIKE);
     }
 
     /**
      * @param string $column
-     * @param int    $value
+     * @param        $value
+     * @param int    $wildcardType
      *
      * @return static
      */
-    public function notLike($column, $value)
+    public function notLike($column, $value, $wildcardType = self::WILDCARD_NONE)
     {
-        return $this->compare($column, $value, self::OPERATOR_NOT_LIKE);
+        return $this->compare($column, $this->wildcardValue($value, $wildcardType), self::OPERATOR_NOT_LIKE);
     }
 
     /**
@@ -634,5 +641,32 @@ class Where
     public function getNull()
     {
         return $this->isNull;
+    }
+
+    /**
+     * @param string $item
+     * @param int    $wildcardType
+     *
+     * @return string
+     */
+    public function wildcardValue($item, $wildcardType)
+    {
+        $final = $item;
+
+        switch ($wildcardType) {
+            case self::WILDCARD_FRONT :
+                $final = '%' . $item;
+                break;
+
+            case self::WILDCARD_BACK :
+                $final = $item . '%';
+                break;
+
+            case self::WILDCARD_BOTH :
+                $final = '%' . $item . '%';
+                break;
+        }
+
+        return $final;
     }
 }
