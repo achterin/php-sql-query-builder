@@ -1,5 +1,5 @@
 {
-    "name":"snapfreeze/sql-query-builder",
+    "name":"achterin/sql-query-builder",
     "description":"FORK -- An elegant lightweight and efficient SQL QueryInterface BuilderInterface supporting bindings and complicated query generation.",
     "keywords": [ "sql", "mysql", "query", "builder", "query builder", "orm"],
     "type":"library",
