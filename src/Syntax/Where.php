@@ -234,37 +234,40 @@ class Where
     /**
      * equals alias.
      *
-     * @param     $column
-     * @param int $value
+     * @param      $column
+     * @param int  $value
+     * @param bool $isAlias
      *
      * @return static
      */
-    public function eq($column, $value)
+    public function eq($column, $value, $isAlias = false)
     {
-        return $this->equals($column, $value);
+        return $this->equals($column, $value, $isAlias);
     }
 
     /**
-     * @param $column
-     * @param $value
+     * @param      $column
+     * @param      $value
+     * @param bool $isAlias
      *
      * @return static
      */
-    public function equals($column, $value)
+    public function equals($column, $value, $isAlias = false)
     {
-        return $this->compare($column, $value, self::OPERATOR_EQUAL);
+        return $this->compare($column, $value, self::OPERATOR_EQUAL, $isAlias);
     }
 
     /**
      * @param        $column
      * @param        $value
      * @param string $operator
+     * @param bool   $isAlias
      *
      * @return $this
      */
-    protected function compare($column, $value, $operator)
+    protected function compare($column, $value, $operator, $isAlias)
     {
-        $column = $this->prepareColumn($column);
+        $column = $this->prepareColumn($column, $isAlias);
 
         $this->comparisons[] = [
             'subject' => $column,
@@ -276,11 +279,12 @@ class Where
     }
 
     /**
-     * @param $column
+     * @param      $column
+     * @param bool $isAlias
      *
      * @return Column|Select
      */
-    protected function prepareColumn($column)
+    protected function prepareColumn($column, $isAlias)
     {
         //This condition handles the "Select as a a column" special case.
         //or when compare column is customized.
@@ -290,86 +294,93 @@ class Where
 
         $newColumn = [$column];
 
-        return SyntaxFactory::createColumn($newColumn, $this->getTable());
+        return SyntaxFactory::createColumn($newColumn, $isAlias ? null : $this->getTable());
     }
 
     /**
      * @param string $column
      * @param int    $value
+     * @param bool   $isAlias
      *
      * @return static
      */
-    public function notEquals($column, $value)
+    public function notEquals($column, $value, $isAlias = false)
     {
-        return $this->compare($column, $value, self::OPERATOR_NOT_EQUAL);
+        return $this->compare($column, $value, self::OPERATOR_NOT_EQUAL, $isAlias);
     }
 
     /**
      * @param string $column
      * @param int    $value
+     * @param bool   $isAlias
      *
      * @return static
      */
-    public function greaterThan($column, $value)
+    public function greaterThan($column, $value, $isAlias = false)
     {
-        return $this->compare($column, $value, self::OPERATOR_GREATER_THAN);
+        return $this->compare($column, $value, self::OPERATOR_GREATER_THAN, $isAlias);
     }
 
     /**
      * @param string $column
      * @param int    $value
+     * @param bool   $isAlias
      *
      * @return static
      */
-    public function greaterThanOrEqual($column, $value)
+    public function greaterThanOrEqual($column, $value, $isAlias = false)
     {
-        return $this->compare($column, $value, self::OPERATOR_GREATER_THAN_OR_EQUAL);
+        return $this->compare($column, $value, self::OPERATOR_GREATER_THAN_OR_EQUAL, $isAlias);
     }
 
     /**
      * @param string $column
      * @param int    $value
+     * @param bool   $isAlias
      *
      * @return static
      */
-    public function lessThan($column, $value)
+    public function lessThan($column, $value, $isAlias = false)
     {
-        return $this->compare($column, $value, self::OPERATOR_LESS_THAN);
+        return $this->compare($column, $value, self::OPERATOR_LESS_THAN, $isAlias);
     }
 
     /**
      * @param string $column
      * @param int    $value
+     * @param bool   $isAlias
      *
      * @return static
      */
-    public function lessThanOrEqual($column, $value)
+    public function lessThanOrEqual($column, $value, $isAlias = false)
     {
-        return $this->compare($column, $value, self::OPERATOR_LESS_THAN_OR_EQUAL);
+        return $this->compare($column, $value, self::OPERATOR_LESS_THAN_OR_EQUAL, $isAlias);
     }
 
     /**
      * @param string $column
      * @param        $value
+     * @param bool   $isAlias
      * @param int    $wildcardType
      *
      * @return static
      */
-    public function like($column, $value, $wildcardType = self::WILDCARD_NONE)
+    public function like($column, $value, $isAlias = false, $wildcardType = self::WILDCARD_NONE)
     {
-        return $this->compare($column, $this->wildcardValue($value, $wildcardType), self::OPERATOR_LIKE);
+        return $this->compare($column, $this->wildcardValue($value, $wildcardType), self::OPERATOR_LIKE, $isAlias);
     }
 
     /**
      * @param string $column
      * @param        $value
+     * @param bool   $isAlias
      * @param int    $wildcardType
      *
      * @return static
      */
-    public function notLike($column, $value, $wildcardType = self::WILDCARD_NONE)
+    public function notLike($column, $value, $isAlias = false, $wildcardType = self::WILDCARD_NONE)
     {
-        return $this->compare($column, $this->wildcardValue($value, $wildcardType), self::OPERATOR_NOT_LIKE);
+        return $this->compare($column, $this->wildcardValue($value, $wildcardType), self::OPERATOR_NOT_LIKE, $isAlias);
     }
 
     /**
@@ -465,12 +476,13 @@ class Where
      * @param string $column
      * @param int    $a
      * @param int    $b
+     * @param bool   $isAlias
      *
      * @return $this
      */
-    public function between($column, $a, $b)
+    public function between($column, $a, $b, $isAlias = false)
     {
-        $column = $this->prepareColumn($column);
+        $column = $this->prepareColumn($column, $isAlias);
         $this->betweens[] = ['subject' => $column, 'a' => $a, 'b' => $b];
 
         return $this;
@@ -480,12 +492,13 @@ class Where
      * @param string $column
      * @param int    $a
      * @param int    $b
+     * @param bool   $isAlias
      *
      * @return $this
      */
-    public function notBetween($column, $a, $b)
+    public function notBetween($column, $a, $b, $isAlias = false)
     {
-        $column = $this->prepareColumn($column);
+        $column = $this->prepareColumn($column, $isAlias);
         $this->notBetweens[] = ['subject' => $column, 'a' => $a, 'b' => $b];
 
         return $this;
@@ -493,12 +506,13 @@ class Where
 
     /**
      * @param string $column
+     * @param bool   $isAlias
      *
      * @return static
      */
-    public function isNull($column)
+    public function isNull($column, $isAlias = false)
     {
-        $column = $this->prepareColumn($column);
+        $column = $this->prepareColumn($column, $isAlias);
         $this->isNull[] = ['subject' => $column];
 
         return $this;
@@ -506,12 +520,13 @@ class Where
 
     /**
      * @param string $column
+     * @param bool   $isAlias
      *
      * @return $this
      */
-    public function isNotNull($column)
+    public function isNotNull($column, $isAlias = false)
     {
-        $column = $this->prepareColumn($column);
+        $column = $this->prepareColumn($column, $isAlias);
         $this->isNotNull[] = ['subject' => $column];
 
         return $this;
@@ -520,12 +535,13 @@ class Where
     /**
      * @param string $column
      * @param int    $value
+     * @param bool   $isAlias
      *
      * @return $this
      */
-    public function addBitClause($column, $value)
+    public function addBitClause($column, $value, $isAlias = false)
     {
-        $column = $this->prepareColumn($column);
+        $column = $this->prepareColumn($column, $isAlias);
         $this->booleans[] = ['subject' => $column, 'value' => $value];
 
         return $this;
