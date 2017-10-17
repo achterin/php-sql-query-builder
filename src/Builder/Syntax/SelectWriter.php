@@ -63,6 +63,10 @@ class SelectWriter extends AbstractBaseWriter
     {
         $parts = ['SELECT'];
 
+        if ($select->isCalcFoundRows()) {
+            $parts[] = 'SQL_CALC_FOUND_ROWS';
+        }
+
         if ($select->isDistinct()) {
             $parts[] = 'DISTINCT';
         }

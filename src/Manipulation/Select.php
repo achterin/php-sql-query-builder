@@ -51,6 +51,11 @@ class Select extends AbstractBaseQuery
     protected $isDistinct = false;
 
     /**
+     * @var bool
+     */
+    protected $isCalcFoundRows = false;
+
+    /**
      * @var Where
      */
     protected $where;
@@ -498,6 +503,24 @@ class Select extends AbstractBaseQuery
     public function isDistinct()
     {
         return $this->isDistinct;
+    }
+
+    /**
+     * @return $this
+     */
+    public function calcFoundRows()
+    {
+        $this->isCalcFoundRows = true;
+
+        return $this;
+    }
+
+    /**
+     * $return bool
+     */
+    public function isCalcFoundRows()
+    {
+        return $this->isCalcFoundRows;
     }
 
     /**
