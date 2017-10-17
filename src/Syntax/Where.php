@@ -685,4 +685,11 @@ class Where
 
         return $final;
     }
+
+    /**
+     * @return QueryInterface
+     */
+    public function getQuery() {
+        return $this->query;
+    }
 }

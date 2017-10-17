@@ -309,7 +309,7 @@ class SelectWriter extends AbstractBaseWriter
 
                 $whereWriter = WriterFactory::createWhereWriter($writer, $placeholder);
                 $clauses = $whereWriter->writeWhereClauses($having);
-                $having = \implode($this->writer->writeConjunction($select->getHavingOperator()), $clauses);
+                $having = \implode($this->writer->writeConjunction($having->getQuery()->getHavingOperator()), $clauses);
             }
         );
 
