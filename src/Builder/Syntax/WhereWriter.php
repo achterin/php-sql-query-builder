@@ -50,6 +50,8 @@ class WhereWriter extends AbstractBaseWriter
         $this->writeWhereMatches($where, $whereArray);
         $this->writeWhereIns($where, $whereArray);
         $this->writeWhereNotIns($where, $whereArray);
+        $this->writeWhereInsSelect($where, $whereArray);
+        $this->writeWhereNotInsSelect($where, $whereArray);
         $this->writeWhereBetweens($where, $whereArray);
         $this->writeWhereNotBetweens($where, $whereArray);
         $this->writeWhereComparisons($where, $whereArray);
@@ -155,6 +157,56 @@ class WhereWriter extends AbstractBaseWriter
         $whereArray = \array_merge(
             $whereArray,
             $this->writeWhereIn($where, 'getNotIns', 'NOT IN')
+        );
+    }
+
+    /**
+     * @param Where $where
+     * @param array $whereArray
+     *
+     * @return array
+     */
+    protected function writeWhereInsSelect(Where $where, array &$whereArray)
+    {
+        $whereArray = \array_merge(
+          $whereArray,
+          $this->writeWhereInSelect($where, 'getInsSelect', 'IN')
+        );
+    }
+
+    /**
+     * @param Where  $where
+     * @param string $method
+     * @param string $operation
+     *
+     * @return array
+     */
+    protected function writeWhereInSelect(Where $where, $method, $operation)
+    {
+        $inSelects = [];
+
+        foreach ($where->$method() as $column => $select) {
+            $newColumn = array($column);
+            $column = SyntaxFactory::createColumn($newColumn, $where->getTable());
+            $column = $this->columnWriter->writeColumn($column);
+
+            $inSelects[] = "({$column} $operation (".$this->writer->write($select, false).'))';
+        }
+
+        return $inSelects;
+    }
+
+    /**
+     * @param Where $where
+     * @param array $whereArray
+     *
+     * @return array
+     */
+    protected function writeWhereNotInsSelect(Where $where, array &$whereArray)
+    {
+        $whereArray = \array_merge(
+          $whereArray,
+          $this->writeExistence($where, 'getNotInsSelect', 'NOT IN')
         );
     }
 

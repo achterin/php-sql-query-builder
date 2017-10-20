@@ -83,6 +83,16 @@ class Where
     /**
      * @var array
      */
+    protected $insSelect = [];
+
+    /**
+     * @var array
+     */
+    protected $notInsSelect = [];
+
+    /**
+     * @var array
+     */
     protected $subWheres = [];
 
     /**
@@ -474,6 +484,32 @@ class Where
 
     /**
      * @param string $column
+     * @param Select $select
+     *
+     * @return $this
+     */
+    public function inSelect($column, Select $select)
+    {
+        $this->insSelect[$column] = $select;
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
+     * @param Select $select
+     *
+     * @return $this
+     */
+    public function notInSelect($column, Select $select)
+    {
+        $this->notInsSelect[$column] = $select;
+
+        return $this;
+    }
+
+    /**
+     * @param string $column
      * @param int    $a
      * @param int    $b
      * @param bool   $isAlias
@@ -609,6 +645,22 @@ class Where
     public function getNotIns()
     {
         return $this->notIns;
+    }
+
+    /**
+     * @return array
+     */
+    public function getInsSelect()
+    {
+        return $this->insSelect;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNotInsSelect()
+    {
+        return $this->notInsSelect;
     }
 
     /**
